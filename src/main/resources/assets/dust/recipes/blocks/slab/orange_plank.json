@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group":"slab_plank",
+  "pattern": [
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "dust:ancient/orangeplanks"
+    }
+  },
+  "result": {
+    "item": "dust:ancient/orangeplankslabs",
+    "count": 6
+  }
+}

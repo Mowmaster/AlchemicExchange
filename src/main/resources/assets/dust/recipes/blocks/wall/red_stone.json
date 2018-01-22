@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group":"wall_stone",
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "dust:ancient/redstone"
+    }
+  },
+  "result": {
+    "item": "dust:ancient/redstonewalls",
+    "count": 6
+  }
+}

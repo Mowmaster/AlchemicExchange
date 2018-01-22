@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group":"slab_brick",
+  "pattern": [
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "dust:ancient/greenbricks2"
+    }
+  },
+  "result": {
+    "item": "dust:ancient/greenbrickslabs2",
+    "count": 6
+  }
+}

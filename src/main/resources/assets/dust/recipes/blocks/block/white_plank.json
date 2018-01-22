@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group":"block_plank",
+  "ingredients": [
+    {"item": "dust:white/log_white"}
+  ],
+  "result": {
+    "item": "dust:ancient/whiteplanks",
+    "count":4
+  }
+}

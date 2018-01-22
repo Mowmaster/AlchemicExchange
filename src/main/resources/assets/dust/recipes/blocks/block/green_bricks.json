@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group":"block_bricks",
+  "pattern": [
+    "BB",
+    "BB"
+  ],
+  "key": {
+    "B": {
+      "item": "dust:ancient/greenbricks2"
+    }
+  },
+  "result": {
+    "item": "dust:ancient/greenbricks",
+    "count": 4
+  }
+}

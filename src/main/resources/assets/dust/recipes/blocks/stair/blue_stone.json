@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group":"stair_stone",
+  "pattern": [
+  	"S  ",
+  	"SS ",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "dust:ancient/bluestone"
+    }
+  },
+  "result": {
+    "item": "dust:ancient/bluestonestairs",
+    "count": 4
+  }
+}

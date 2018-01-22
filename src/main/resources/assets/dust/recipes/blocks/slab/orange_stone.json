@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group":"slab_stone",
+  "pattern": [
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "dust:ancient/orangestone"
+    }
+  },
+  "result": {
+    "item": "dust:ancient/orangestoneslabs",
+    "count": 6
+  }
+}
