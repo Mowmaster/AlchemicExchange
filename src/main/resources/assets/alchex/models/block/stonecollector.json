@@ -1,0 +1,9 @@
+{
+  "parent": "alchex:block/collector",
+  "textures": {
+    "bottom": "alchex:blocks/collector/collector_bottom",
+    "side": "alchex:blocks/collector/collector_side",
+    "top": "alchex:blocks/collector/collector_top",
+    "particle": "alchex:blocks/collector/collector_bottom"
+  }
+}

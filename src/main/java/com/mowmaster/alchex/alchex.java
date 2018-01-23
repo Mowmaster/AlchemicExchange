@@ -1,7 +1,11 @@
 package com.mowmaster.alchex;
 
 
+import com.mowmaster.alchex.blocks.BlockRegistry;
+import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
+import com.mowmaster.alchex.blocks.tiles.TileRegister;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -10,8 +14,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import com.mowmaster.alchex.proxies.CommonProxy;
 import com.mowmaster.alchex.references.Reference;
-
-import java.io.File;
 
 
 @Mod(modid = Reference.MODID, name = Reference.MODNAME, version = Reference.VERSION)
@@ -22,11 +24,20 @@ public class alchex {
     @SidedProxy(serverSide = Reference.SERVER_SIDE, clientSide = Reference.CLIENT_SIDE)
     public static CommonProxy proxy;
 
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
+
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
 
+        LiquidBasic.regFluids();
+        LiquidBasic.regFluidBlocks();
+        BlockRegistry.init();
+        BlockRegistry.register();
+        TileRegister.registerTile();
         proxy.PreInit();
         proxy.registerTile();
 
