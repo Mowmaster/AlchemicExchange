@@ -1,8 +1,0 @@
-{
-    "parent": "dust:block/ore_one",
-    "textures": {
-        "break": "dust:blocks/crystalcore_yellow",
-        "core": "dust:items/crystalcore_yellow",
-        "side": "dust:items/crystal_yellow"
-    }
-}

@@ -1,8 +1,0 @@
-{
-    "parent": "dust:block/ore_four",
-    "textures": {
-        "break": "dust:blocks/crystalcore_purple",
-        "core": "dust:items/crystalcore_purple",
-        "side": "dust:items/crystal_purple"
-    }
-}

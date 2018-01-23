@@ -1,7 +1,0 @@
-{
-    "parent": "dust:item/item_crystal",
-    "textures": {
-        "core": "dust:items/crystalcore_orange",
-        "side": "dust:items/crystal_orange"
-    }
-}
