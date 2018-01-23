@@ -1,5 +1,6 @@
 package com.mowmaster.alchex.blocks;
 
+import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
 import com.mowmaster.alchex.references.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -9,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 
@@ -17,6 +19,8 @@ public class BlockRegistry
 
     //public static Block redOre;
     public static Block basicCollector;
+    public static BlockFluidClassic liquidSunlight;
+    public static BlockFluidClassic liquidMoonlight;
 
 
     public static void init() {

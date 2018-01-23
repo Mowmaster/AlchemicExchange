@@ -4,6 +4,7 @@ package com.mowmaster.alchex;
 import com.mowmaster.alchex.blocks.BlockRegistry;
 import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
 import com.mowmaster.alchex.blocks.tiles.TileRegister;
+import com.mowmaster.alchex.recipes.CollectorRecipes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -38,6 +39,7 @@ public class alchex {
         BlockRegistry.init();
         BlockRegistry.register();
         TileRegister.registerTile();
+
         proxy.PreInit();
         proxy.registerTile();
 
@@ -48,10 +50,13 @@ public class alchex {
         proxy.init();
         proxy.registerModelBakeryVarients();
         MinecraftForge.EVENT_BUS.register(this);
+
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    public void postInit(FMLPostInitializationEvent event)
+    {
+
     }
 
 }

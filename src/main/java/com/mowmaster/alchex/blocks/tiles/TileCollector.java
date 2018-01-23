@@ -1,18 +1,24 @@
 package com.mowmaster.alchex.blocks.tiles;
 
+import com.mowmaster.alchex.recipes.CollectorRecipes;
 import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nullable;
@@ -27,10 +33,15 @@ public class TileCollector extends TileEntity implements ITickable
     public int rando;//item wear value
     public final int timepassedmax=12;//ticks per mb
     public boolean running=false;
+    public ItemStack itemNamed= ItemStack.EMPTY;
+    public FluidStack fluidNamed;
+    public ItemStack isItemUsed = CollectorRecipes.instance().getCollectorInput(itemNamed);
+    public FluidStack fluidOutput = CollectorRecipes.instance().getCollectorResult(fluidNamed);
 
 
 
-    public ItemStack getItemnamed(){return itemnamed;}
+    public ItemStack getItemnamed(){return isItemUsed;}
+    public FluidStack getFluid(){return fluidOutput;}
     public int getLiquidStored()
     {
         return liquidstored;
@@ -68,17 +79,22 @@ public class TileCollector extends TileEntity implements ITickable
 
     }
 
-    public ItemStack itemnamed;
+
     public boolean addItem(ItemStack itemname)
     {
-        this.itemnamed=itemname;
-        Random rn = new Random();
-        rando = rn.nextInt(875)+125;
-        running=true;
-        markDirty();
-        IBlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos,state,state,3);
-        return true;
+        ItemStack itemStack = CollectorRecipes.instance().getCollectorInput(itemname);
+        if(itemname.isItemEqual(itemStack))
+        {
+            itemNamed=itemname;
+            Random rn = new Random();
+            rando = rn.nextInt(875)+125;
+            running=true;
+            markDirty();
+            IBlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos,state,state,3);
+            return true;
+        }
+        return false;
     }
 
     public boolean addFluid()
@@ -142,6 +158,10 @@ public class TileCollector extends TileEntity implements ITickable
     public SPacketUpdateTileEntity getUpdatePacket() {
         return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
     }
+
+
+
+
 
 
 }
