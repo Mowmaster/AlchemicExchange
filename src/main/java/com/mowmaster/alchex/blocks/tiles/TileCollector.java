@@ -1,27 +1,14 @@
 package com.mowmaster.alchex.blocks.tiles;
 
 import com.mowmaster.alchex.recipes.CollectorRecipes;
-import net.minecraft.block.BlockCauldron;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityBrewingStand;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ITickable;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 
@@ -33,15 +20,7 @@ public class TileCollector extends TileEntity implements ITickable
     public int rando;//item wear value
     public final int timepassedmax=12;//ticks per mb
     public boolean running=false;
-    public ItemStack itemNamed= ItemStack.EMPTY;
-    public FluidStack fluidNamed;
-    public ItemStack isItemUsed = CollectorRecipes.instance().getCollectorInput(itemNamed);
-    public FluidStack fluidOutput = CollectorRecipes.instance().getCollectorResult(fluidNamed);
 
-
-
-    public ItemStack getItemnamed(){return isItemUsed;}
-    public FluidStack getFluid(){return fluidOutput;}
     public int getLiquidStored()
     {
         return liquidstored;
@@ -80,20 +59,23 @@ public class TileCollector extends TileEntity implements ITickable
     }
 
 
+    private ItemStack itemStack;
+    public ItemStack getItemInBlock(){return itemStack;}
     public boolean addItem(ItemStack itemname)
     {
-        ItemStack itemStack = CollectorRecipes.instance().getCollectorInput(itemname);
-        if(itemname.isItemEqual(itemStack))
-        {
-            itemNamed=itemname;
-            Random rn = new Random();
-            rando = rn.nextInt(875)+125;
-            running=true;
-            markDirty();
-            IBlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos,state,state,3);
-            return true;
-        }
+        itemStack = CollectorRecipes.instance().getCollectorInput(itemname);
+
+            if(!(CollectorRecipes.instance().getCollectorInput(itemname).isEmpty())&&running==false)
+            {
+                Random rn = new Random();
+                rando = rn.nextInt(875)+125;
+                running=true;
+                markDirty();
+                IBlockState state = world.getBlockState(pos);
+                world.notifyBlockUpdate(pos,state,state,3);
+                return true;
+            }
+
         return false;
     }
 
@@ -120,11 +102,11 @@ public class TileCollector extends TileEntity implements ITickable
         return true;
     }
 
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        //compound.setString("itemname",itemname);
         compound.setInteger("liquidstored",liquidstored);
         compound.setInteger("rando",rando);
         compound.setBoolean("running",running);
@@ -136,7 +118,6 @@ public class TileCollector extends TileEntity implements ITickable
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        //this.itemname = compound.getString("itemname");
         this.liquidstored = compound.getInteger("liquidstored");
         this.rando = compound.getInteger("rando");
         this.running = compound.getBoolean("running");

@@ -52,12 +52,13 @@ public class CollectorRecipes
     }
 
     /**
-     * Adds a smelting recipe using an ItemStack as the input for the recipe.
+     * Adds a collector recipe using an ItemStack as the input for the recipe.
      */
     public void addCollectorRecipe(ItemStack input, FluidStack fluidStack)
     {
-        if (!(getCollectorResult(fluidStack).containsFluid(fluidStack)) /*!= ItemStack.EMPTY*/) { net.minecraftforge.fml.common.FMLLog.log.info("Ignored collector recipe with conflicting input: {} = {}", input, fluidStack); return; }
+        if (getCollectorInput(input) != ItemStack.EMPTY) { net.minecraftforge.fml.common.FMLLog.log.info("Ignored smelting recipe with conflicting input: {} = {}", input, fluidStack); return; }
         this.collectorList.put(input, fluidStack);
+
     }
 
 

@@ -99,16 +99,24 @@ public class BlockCollector extends Block implements ITileEntityProvider
             if (tileEntity instanceof TileCollector) {
                 TileCollector tileCollector = (TileCollector) tileEntity;
 
-                tileCollector.addItem(playerIn.getHeldItem(hand));
 
 
-                if (playerIn.getHeldItem(hand) !=null)
+
+                if (playerIn.getHeldItem(hand).isEmpty())
                 {
-                    System.out.println(tileCollector.getFluid());
-                    //System.out.println(tileCollector.getItemnamed());
+                    System.out.println(tileCollector.getItemInBlock().getDisplayName());
                     System.out.println(tileCollector.getItemWear());
                     System.out.println(tileCollector.getLiquidStored());
                     System.out.println(tileCollector.getOnStatus());
+                }
+                else
+                {
+                    ItemStack itemInHand = playerIn.getHeldItem(hand);
+                    if(tileCollector.addItem(itemInHand))
+                    {
+                        itemInHand.shrink(1);
+                    }
+
                 }
 
 
