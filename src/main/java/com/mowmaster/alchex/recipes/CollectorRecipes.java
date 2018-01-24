@@ -81,11 +81,11 @@ public class CollectorRecipes
     /**
      * Returns the collector result of an liquid.
      */
-    public FluidStack getCollectorResult(FluidStack fluidStack)
+    public FluidStack getCollectorResult(ItemStack itemStack)
     {
         for (Map.Entry<ItemStack, FluidStack> entry : this.collectorList.entrySet())
         {
-            if (FluidStack.areFluidStackTagsEqual(fluidStack,entry.getValue()))
+            if (this.compareItemStacks(itemStack, entry.getKey()))
             {
                 return entry.getValue();
             }

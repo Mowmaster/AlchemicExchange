@@ -4,10 +4,6 @@
     "alchex:sunlight": {
       "model": "forge:fluid",
       "custom": { "fluid": "alchex:sunlight" }
-    },
-    "alchex:moonlight": {
-      "model": "forge:fluid",
-      "custom": { "fluid": "alchex:moonlight" }
     }
   }
 }

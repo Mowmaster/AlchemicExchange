@@ -3,11 +3,14 @@ package com.mowmaster.alchex.proxies;
 
 import com.mowmaster.alchex.blocks.BlockRegistry;
 import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
+import com.mowmaster.alchex.blocks.tiles.TileCollector;
+import com.mowmaster.alchex.blocks.tiles.TileRenders.RenderCollector;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,6 +24,9 @@ public class ClientProxy extends CommonProxy
     {
         //registerFluidRenderers();
         BlockRegistry.registerRenders();
+
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileCollector.class,new RenderCollector());
     }
 
     @Override
