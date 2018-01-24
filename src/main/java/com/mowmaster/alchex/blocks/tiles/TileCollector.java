@@ -15,8 +15,9 @@ import java.util.Random;
 public class TileCollector extends TileEntity implements ITickable
 {
 
+    private ItemStack itemStack = ItemStack.EMPTY;
     public final int maxliquid = 1000;
-    public static int liquidstored;
+    public static int liquidstored = 0;
     public int rando;//item wear value
     public final int timepassedmax=12;//ticks per mb
     public boolean running=false;
@@ -59,7 +60,7 @@ public class TileCollector extends TileEntity implements ITickable
     }
 
 
-    private ItemStack itemStack;
+
     public ItemStack getItemInBlock(){return itemStack;}
     public boolean addItem(ItemStack itemname)
     {
@@ -82,7 +83,7 @@ public class TileCollector extends TileEntity implements ITickable
     public boolean addFluid()
     {
 
-        if(world.isDaytime())
+        if(world.canSeeSky(pos))
         {
             liquidstored++;
         }
@@ -107,6 +108,7 @@ public class TileCollector extends TileEntity implements ITickable
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
+        compound.setTag("item",itemStack.writeToNBT(new NBTTagCompound()));
         compound.setInteger("liquidstored",liquidstored);
         compound.setInteger("rando",rando);
         compound.setBoolean("running",running);
@@ -118,6 +120,8 @@ public class TileCollector extends TileEntity implements ITickable
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        NBTTagCompound itemTag = compound.getCompoundTag("item");
+        this.itemStack = new ItemStack(itemTag);
         this.liquidstored = compound.getInteger("liquidstored");
         this.rando = compound.getInteger("rando");
         this.running = compound.getBoolean("running");

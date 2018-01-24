@@ -9,11 +9,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 
 public class CollectorRecipes
 {
+
+
     private static final CollectorRecipes COLLECTOR_BASE = new CollectorRecipes();
     /** The list of collector results. (Input item, Output Fluid) */
     private final Map<ItemStack, FluidStack> collectorList = Maps.<ItemStack, FluidStack>newHashMap();
