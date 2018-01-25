@@ -45,25 +45,34 @@ public class TileCollector extends TileEntity implements ITickable
 
         if (!this.world.isRemote)
         {
-            if(running==true)
-            {
-                if(ticker<=timepassedmax)
+            if(liquidstored<=maxliquid){
+                if(running==true)
                 {
-                    ticker++;
+                    if(ticker<=timepassedmax)
+                    {
+                        ticker++;
+                    }
+                    else{ticker=0;addFluid();rando--;}
                 }
-                else{ticker=0;addFluid();rando--;}
-            }
-            else{ticker=0;}
+                else{ticker=0;}
 
-            if(rando<=0)
-            {
-                breakItem();
+                if(rando<=0)
+                {
+                    breakItem();
+                }
             }
+            else{running=false;}
+
         }
 
     }
 
 
+    public boolean resetBlock()
+    {
+        liquidstored=0;
+        return true;
+    }
 
     public ItemStack getItemInBlock(){return itemStack;}
     public boolean addItem(ItemStack itemname)

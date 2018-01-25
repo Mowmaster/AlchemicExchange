@@ -108,17 +108,19 @@ public class BlockCollector extends Block implements ITileEntityProvider
                     System.out.println(tileCollector.getOnStatus());
                     return true;
                 }
-                else if(tileCollector.getLiquidStored()>=1000 && playerIn.getHeldItem(hand).equals(Items.BUCKET))
+                else if(tileCollector.getLiquidStored()<=1000 && playerIn.getHeldItem(hand).equals(Items.BUCKET))
                 {
                     playerIn.getHeldItem(hand).shrink(1);
 
                     if (playerIn.getHeldItem(hand).isEmpty())
                     {
                         playerIn.setHeldItem(hand, FluidUtil.getFilledBucket(tileCollector.getLiquidOutput()));
+                        tileCollector.resetBlock();
                     }
                     else if (!playerIn.inventory.addItemStackToInventory(FluidUtil.getFilledBucket(tileCollector.getLiquidOutput())))
                     {
                         playerIn.dropItem(FluidUtil.getFilledBucket(tileCollector.getLiquidOutput()), false);
+                        tileCollector.resetBlock();
                     }
                 }
                 else
