@@ -6,10 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 
@@ -32,6 +30,8 @@ public class CollectorRecipes
 
     private CollectorRecipes()
     {
+        //this.addCollectorRecipeForItem(Items.NETHERBRICK, new FluidStack(FluidRegistry.LAVA,1));
+        //this.addCollectorRecipeForItem(Items.APPLE, new FluidStack(FluidRegistry.WATER,1));
         this.addCollectorRecipeForItem(Items.GLOWSTONE_DUST, new FluidStack(LiquidBasic.fluidSunlight,1));
         this.addCollectorRecipeForItem(Items.QUARTZ, new FluidStack(LiquidBasic.fluidMoonlight,1));
     }

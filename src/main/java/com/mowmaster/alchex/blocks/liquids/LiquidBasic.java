@@ -47,7 +47,7 @@ public class LiquidBasic
 
         blockFluidMoonlight = new BlockFluidClassic(fluidMoonlight,Material.WATER);
         ForgeRegistries.BLOCKS.register(blockFluidMoonlight.setUnlocalizedName("moonlight").setRegistryName("moonlight"));
-        fluidSunlight.setBlock(blockFluidMoonlight);
+        fluidMoonlight.setBlock(blockFluidMoonlight);
         FluidRegistry.addBucketForFluid(fluidMoonlight);
     }
 
@@ -60,7 +60,7 @@ public class LiquidBasic
         fluidMoonlight = new Fluid("moonlight",new ResourceLocation("alchex:blocks/fluids/moonlight_still"),new ResourceLocation("alchex:blocks/fluids/moonlight_flowing")).setDensity(1000).setViscosity(2000);
         FluidRegistry.registerFluid(fluidMoonlight);
         fluidMoonlight = FluidRegistry.getFluid("moonlight");
-        FluidRegistry.addBucketForFluid(fluidMoonlight);
+
     }
 
 }

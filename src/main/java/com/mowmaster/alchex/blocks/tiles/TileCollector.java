@@ -8,6 +8,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Random;
@@ -18,17 +19,17 @@ public class TileCollector extends TileEntity implements ITickable
 
     private ItemStack itemStack = ItemStack.EMPTY;
     public final int maxliquid = 1000;
-    public static int liquidstored = 0;
-    public static FluidStack fluidStored;
+    public int liquidstored = 0;
+    private Fluid fluidStored=null;
     public int rando;//item wear value
-    public final int timepassedmax=12;//ticks per mb
+    public final int timepassedmax=1;//ticks per mb
     public boolean running=false;
 
     public int getLiquidStored()
     {
         return liquidstored;
     }
-    public FluidStack getFluidBeingStored(){return fluidStored;};
+    public Fluid getFluidBeingStored(){return fluidStored;};
     public int getItemWear()
     {
         return rando;
@@ -37,7 +38,7 @@ public class TileCollector extends TileEntity implements ITickable
     {
         return running;
     }
-    public FluidStack getLiquidOutput(){return CollectorRecipes.instance().getCollectorResult(itemStack);}
+    public Fluid getLiquidOutput(){return CollectorRecipes.instance().getCollectorResult(itemStack).getFluid();}
 
     private int ticker=0;
     public void update()
@@ -51,6 +52,9 @@ public class TileCollector extends TileEntity implements ITickable
                     if(ticker<=timepassedmax)
                     {
                         ticker++;
+                        markDirty();
+                        IBlockState state = world.getBlockState(pos);
+                        world.notifyBlockUpdate(pos,state,state,3);
                     }
                     else{ticker=0;addFluid();rando--;}
                 }
@@ -83,7 +87,7 @@ public class TileCollector extends TileEntity implements ITickable
             {
                 Random rn = new Random();
                 rando = rn.nextInt(875)+125;
-                fluidStored = CollectorRecipes.instance().getCollectorResult(itemStack);
+                fluidStored = CollectorRecipes.instance().getCollectorResult(itemStack).getFluid();
                 running=true;
                 markDirty();
                 IBlockState state = world.getBlockState(pos);
@@ -123,7 +127,6 @@ public class TileCollector extends TileEntity implements ITickable
     {
         super.writeToNBT(compound);
         compound.setTag("item",itemStack.writeToNBT(new NBTTagCompound()));
-        //compound.setTag("fluid",fluidStored.writeToNBT(new NBTTagCompound()));
         compound.setInteger("liquidstored",liquidstored);
         compound.setInteger("rando",rando);
         compound.setBoolean("running",running);
@@ -137,11 +140,16 @@ public class TileCollector extends TileEntity implements ITickable
         super.readFromNBT(compound);
         NBTTagCompound itemTag = compound.getCompoundTag("item");
         this.itemStack = new ItemStack(itemTag);
-        //NBTTagCompound liquidTag = compound.getCompoundTag("liquid");
-        //this.fluidStored = new FluidStack(liquidTag);
         this.liquidstored = compound.getInteger("liquidstored");
         this.rando = compound.getInteger("rando");
         this.running = compound.getBoolean("running");
+        if(!itemStack.isEmpty())
+        {
+            fluidStored=CollectorRecipes.instance().getCollectorResult(itemStack).getFluid();
+        }
+
+
+
     }
 
 

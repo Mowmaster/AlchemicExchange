@@ -3,6 +3,7 @@ package com.mowmaster.alchex.blocks;
 import com.mowmaster.alchex.blocks.tiles.TileCollector;
 import com.mowmaster.alchex.references.Reference;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -11,12 +12,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -67,7 +70,10 @@ public class BlockCollector extends Block implements ITileEntityProvider
         return new BlockStateContainer(this);
     }
 
-
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
 
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
@@ -114,12 +120,12 @@ public class BlockCollector extends Block implements ITileEntityProvider
 
                     if (playerIn.getHeldItem(hand).isEmpty())
                     {
-                        playerIn.setHeldItem(hand, FluidUtil.getFilledBucket(tileCollector.getLiquidOutput()));
+                        playerIn.setHeldItem(hand, new ItemStack(Items.WATER_BUCKET));
                         tileCollector.resetBlock();
                     }
-                    else if (!playerIn.inventory.addItemStackToInventory(FluidUtil.getFilledBucket(tileCollector.getLiquidOutput())))
+                    else if (!playerIn.inventory.addItemStackToInventory(FluidUtil.getFilledBucket(new FluidStack(tileCollector.getLiquidOutput(),1))))
                     {
-                        playerIn.dropItem(FluidUtil.getFilledBucket(tileCollector.getLiquidOutput()), false);
+                        playerIn.dropItem(new ItemStack(Items.WATER_BUCKET), false);
                         tileCollector.resetBlock();
                     }
                 }
