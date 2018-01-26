@@ -75,11 +75,11 @@ public class RenderCollector extends TileEntitySpecialRenderer<TileCollector>
 
             float zero = 0.1875f;
             float one = 0.8125f;
-            float yvalue = 0.37f;
+            float yvalue = 0.38f;
             renderer.pos(zero, scale+yvalue, zero).tex(u1, v1).color(255, 255, 255, 128).endVertex();
-            renderer.pos(zero, scale+yvalue, one).tex(u1, v2).color(255, 255, 255, 128).endVertex();;
-            renderer.pos(one, scale+yvalue, one).tex(u2, v2).color(255, 255, 255, 128).endVertex();;
-            renderer.pos(one, scale+yvalue, zero).tex(u2, v1).color(255, 255, 255, 128).endVertex();;
+            renderer.pos(zero, scale+yvalue, one).tex(u1, v2).color(255, 255, 255, 128).endVertex();
+            renderer.pos(one, scale+yvalue, one).tex(u2, v2).color(255, 255, 255, 128).endVertex();
+            renderer.pos(one, scale+yvalue, zero).tex(u2, v1).color(255, 255, 255, 128).endVertex();
 
             tessellator.draw();
 
