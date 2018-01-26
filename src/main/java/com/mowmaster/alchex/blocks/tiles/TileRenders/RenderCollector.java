@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -47,17 +48,17 @@ public class RenderCollector extends TileEntitySpecialRenderer<TileCollector>
             return;
         }
 
-        Fluid renderFluid = collector.getFluidBeingStored();
-        if (renderFluid == null) {
+        FluidStack renderFluid = collector.tank.getFluid();
+        if (renderFluid==null) {
             return;
         }
 
 
-        float scale = (collector.getLiquidStored()/10) * 0.005675f;
+        float scale = (collector.tank.getFluidAmount()/10) * 0.005675f;
 
         if (scale > 0) {
             BufferBuilder renderer = tessellator.getBuffer();
-            ResourceLocation still = renderFluid.getStill();
+            ResourceLocation still = renderFluid.getFluid().getStill();
             TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
 
             net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();

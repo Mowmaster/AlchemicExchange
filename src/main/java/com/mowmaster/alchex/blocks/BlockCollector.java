@@ -103,44 +103,34 @@ public class BlockCollector extends Block implements ITileEntityProvider
             if (tileEntity instanceof TileCollector) {
                 TileCollector tileCollector = (TileCollector) tileEntity;
 
-
-
                 if (playerIn.getHeldItem(hand).isEmpty())
                 {
-                    System.out.println(tileCollector.getItemInBlock().getDisplayName());
-                    System.out.println(tileCollector.getItemWear());
-                    System.out.println(tileCollector.getLiquidStored());
-                    System.out.println(tileCollector.getLiquidOutput().getUnlocalizedName());
-                    System.out.println(tileCollector.getOnStatus());
-                    return true;
+                    if(playerIn.isSneaking())
+                    {
+                        tileCollector.removeItem();
+                    }
                 }
-                else if(tileCollector.getLiquidStored()<=1000 && playerIn.getHeldItem(hand).equals(Items.BUCKET))
+                else if(tileCollector.tank.getFluidAmount()>=1000 && playerIn.getHeldItem(hand).equals(Items.BUCKET))
                 {
                     playerIn.getHeldItem(hand).shrink(1);
-
                     if (playerIn.getHeldItem(hand).isEmpty())
                     {
                         playerIn.setHeldItem(hand, new ItemStack(Items.WATER_BUCKET));
-                        tileCollector.resetBlock();
+                        tileCollector.removeFluid();
                     }
                     else if (!playerIn.inventory.addItemStackToInventory(FluidUtil.getFilledBucket(new FluidStack(tileCollector.getLiquidOutput(),1))))
                     {
                         playerIn.dropItem(new ItemStack(Items.WATER_BUCKET), false);
-                        tileCollector.resetBlock();
+                        tileCollector.removeFluid();
                     }
                 }
                 else
                 {
-
                     if(tileCollector.addItem(playerIn.getHeldItem(hand)))
                     {
                         playerIn.getHeldItem(hand).shrink(1);
                     }
-                    return true;
-
                 }
-
-
             }
         }
         return false;
