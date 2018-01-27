@@ -71,6 +71,7 @@ public class TileCollector extends TileEntity implements ITickable
     {
         if(!(this.areFluidsEqual(itemStack)))
         {
+            //Return item from here and just check if stack is empty instead
             //worldIn.spawnEntity(new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, itemStack));
             itemStack=ItemStack.EMPTY;
             running=false;

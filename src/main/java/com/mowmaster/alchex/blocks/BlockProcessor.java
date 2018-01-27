@@ -1,22 +1,45 @@
 package com.mowmaster.alchex.blocks;
 
+import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
+import com.mowmaster.alchex.blocks.tiles.TileCollector;
+import com.mowmaster.alchex.blocks.tiles.TileProcessor;
+import com.mowmaster.alchex.recipes.ProcessorRecipes;
 import com.mowmaster.alchex.references.Reference;
 import net.minecraft.block.Block;
 
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
-/**
- * Created by KingMowmaster on 1/26/2018.
- */
-public class BlockProcessor extends Block
+import static com.mowmaster.alchex.blocks.liquids.LiquidBasic.fluidMoonlight;
+
+
+public class BlockProcessor extends Block implements ITileEntityProvider
 {
     public BlockProcessor(String unloc, String registryName, Material material)
     {
@@ -50,5 +73,101 @@ public class BlockProcessor extends Block
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.CUTOUT;
+    }
+
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 1.0D, 0.9375D);
+    }
+
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
+        return this.getDefaultState();
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        IBlockState state = this.getDefaultState();
+        return state;
+    }
+
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        return true;
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TileProcessor();
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileProcessor();
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    {
+
+        if(!worldIn.isRemote)
+        {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if (tileEntity instanceof TileProcessor) {
+                TileProcessor tileProcessor = (TileProcessor) tileEntity;
+                ItemStack input = playerIn.getHeldItem(hand);
+
+
+
+                if(playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking() && !(facing==EnumFacing.UP))
+                {
+                    System.out.println(tileProcessor.itemStackInput.getDisplayName());
+                    System.out.println(tileProcessor.itemStackInput.getCount());
+
+                    if(!(tileProcessor.tank==null))
+                    {
+                        System.out.println(tileProcessor.tank.getFluid());
+                        System.out.println(tileProcessor.tank.getFluidAmount());
+                    }
+
+
+                }
+
+                else if (!playerIn.getHeldItem(hand).isEmpty() && facing==EnumFacing.UP)
+                {
+                    if(tileProcessor.onItemAdded(input))
+                    {
+                        playerIn.getHeldItem(hand).shrink(tileProcessor.itemToShrink);
+                    }
+
+                }
+
+                else if(playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking() && facing==EnumFacing.UP)
+                {
+                    playerIn.inventory.addItemStackToInventory(tileProcessor.onItemRemoved());
+                }
+
+                else if(playerIn.getHeldItem(hand).getItem() instanceof ItemBucket || playerIn.getHeldItem(hand).getItem() instanceof UniversalBucket)
+                {
+                    System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+                }
+
+            }
+        }
+        return false;
     }
 }
