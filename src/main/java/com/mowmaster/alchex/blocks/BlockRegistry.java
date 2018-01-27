@@ -19,6 +19,7 @@ public class BlockRegistry
 
     //public static Block redOre;
     public static Block basicCollector;
+    public static Block basicProcessor;
     public static BlockFluidClassic liquidSunlight;
     public static BlockFluidClassic liquidMoonlight;
 
@@ -26,18 +27,22 @@ public class BlockRegistry
     public static void init() {
         //redOre = new BlockCrystalOre("redore", "red/redore");
         basicCollector = new BlockCollector("stone_collector","stone_collector", Material.ROCK);
+        basicProcessor = new BlockProcessor("processor","processor", Material.ROCK);
+
     }
 
     public static void register()
     {
         //registerBlock(redOre);
         registerBlock(basicCollector);
+        registerBlock(basicProcessor);
     }
 
     public static void registerRenders()
     {
         //registerRender(redOre);
         registerRender(basicCollector);
+        registerRender(basicProcessor);
     }
 
 
