@@ -57,8 +57,12 @@ public class RenderCollector extends TileEntitySpecialRenderer<TileCollector>
         float scale = (collector.tank.getFluidAmount()/10) * 0.005675f;
 
         if (scale > 0) {
-            BufferBuilder renderer = tessellator.getBuffer();
             ResourceLocation still = renderFluid.getFluid().getStill();
+            bindTexture(still);
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
+            BufferBuilder renderer = tessellator.getBuffer();
+
             TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
 
             net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
@@ -72,14 +76,20 @@ public class RenderCollector extends TileEntitySpecialRenderer<TileCollector>
             float v2 = sprite.getMaxV();
 
             // Top
+            float color = 1f;
+            float alpha = 0.75f;
 
-            float zero = 0.1875f;
-            float one = 0.8125f;
+            //float zero = 0.1875f;
+            //float one = 0.8125f;
+            float zero = 0.3f;
+            float one = 0.7f;
             float yvalue = 0.38f;
-            renderer.pos(zero, scale+yvalue, zero).tex(u1, v1).color(255, 255, 255, 128).endVertex();
-            renderer.pos(zero, scale+yvalue, one).tex(u1, v2).color(255, 255, 255, 128).endVertex();
-            renderer.pos(one, scale+yvalue, one).tex(u2, v2).color(255, 255, 255, 128).endVertex();
-            renderer.pos(one, scale+yvalue, zero).tex(u2, v1).color(255, 255, 255, 128).endVertex();
+            renderer.pos(zero, scale+yvalue, zero).tex(u1, v1).color(color, color, color, alpha).endVertex();
+            renderer.pos(zero, scale+yvalue, one).tex(u1, v2).color(color, color, color, alpha).endVertex();
+            renderer.pos(one, scale+yvalue, one).tex(u2, v2).color(color, color, color, alpha).endVertex();
+            renderer.pos(one, scale+yvalue, zero).tex(u2, v1).color(color, color, color, alpha).endVertex();
+
+
 
             tessellator.draw();
 

@@ -11,11 +11,15 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 
@@ -34,14 +38,10 @@ public class TileCollector extends TileEntity implements ITickable
 
     public FluidStack getLiquidOutput(ItemStack itemStack)
     {
-        if(tank.getFluid()!=null)
-        {
-            return CollectorRecipes.instance().getCollectorResult(itemStack);
-        }
-        return null;
+        return CollectorRecipes.instance().getCollectorResult(itemStack);
     }
     public ItemStack getItemInBlock(){return itemStack;}
-    public boolean areFluidsEqual(ItemStack itemStack){return tank.getFluid()==getLiquidOutput(itemStack);}
+    public boolean areFluidsEqual(ItemStack itemStack){return tank.getFluid().isFluidEqual(getLiquidOutput(itemStack));}
 
 
 
@@ -62,7 +62,7 @@ public class TileCollector extends TileEntity implements ITickable
             itemWearValue();
             return true;
         }
-        else if (!itemStack.isEmpty() && tank.canFill() && running==false)
+        else if (itemStack.isEmpty() && tank.canFill() && running==false)
         {
             if(this.areFluidsEqual(itemStack))
             {
@@ -205,6 +205,15 @@ public class TileCollector extends TileEntity implements ITickable
     public SPacketUpdateTileEntity getUpdatePacket() {
         return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
     }
+
+    /*
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return TileEntity.INFINITE_EXTENT_AABB;
+    }
+     */
 
 
 

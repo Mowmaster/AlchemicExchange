@@ -33,7 +33,6 @@ import org.lwjgl.Sys;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-import static com.mowmaster.alchex.blocks.liquids.LiquidBasic.fluidMoonlight;
 
 
 public class BlockProcessor extends Block implements ITileEntityProvider
@@ -118,27 +117,20 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                 {
                     if(tileProcessor.onFluidInteract(input))
                     {
-                        System.out.println("BLARRRRRG!!!");
                         playerIn.getHeldItem(hand).shrink(1);
                         if (playerIn.getHeldItem(hand).isEmpty())
                         {
                             playerIn.setHeldItem(hand, tileProcessor.playerOutput);
-                            System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
-                            System.out.println(tileProcessor.tank.getFluidAmount());
                             return true;
                         }
                         else if (!playerIn.getHeldItem(hand).isEmpty())
                         {
                             playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
-                            System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
-                            System.out.println(tileProcessor.tank.getFluidAmount());
                             return true;
                         }
                         else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
                         {
                             playerIn.dropItem(tileProcessor.playerOutput, false);
-                            System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
-                            System.out.println(tileProcessor.tank.getFluidAmount());
                             return true;
                         }
 
@@ -151,22 +143,16 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                     if (playerIn.getHeldItem(hand).isEmpty())
                     {
                         playerIn.setHeldItem(hand, tileProcessor.playerOutput);
-                        System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
-                        System.out.println(tileProcessor.tank.getFluidAmount());
                         return true;
                     }
                     else if (!playerIn.getHeldItem(hand).isEmpty())
                     {
                         playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
-                        System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
-                        System.out.println(tileProcessor.tank.getFluidAmount());
                         return true;
                     }
                     else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
                     {
                         playerIn.dropItem(tileProcessor.playerOutput, false);
-                        System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
-                        System.out.println(tileProcessor.tank.getFluidAmount());
                         return true;
                     }
 

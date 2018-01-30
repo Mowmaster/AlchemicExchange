@@ -119,17 +119,17 @@ public class ProcessorRecipes
         return ItemStack.EMPTY;
     }
 
-    public ItemStack getProcessorInputFluidItem(FluidStack stack)
+    public FluidStack getProcessorInputFluidFromInputItem(ItemStack stack)
     {
         for (Map.Entry<ItemStack, ProcessorHash> entry : this.processorList.entrySet())
         {
-            if (stack.isFluidEqual(entry.getValue().getFluidInput()))
+            if (this.compareItemStacks(stack, entry.getValue().getInput()))
             {
-                return entry.getValue().getInput();
+                return entry.getValue().getFluidInput();
             }
         }
 
-        return ItemStack.EMPTY;
+        return null;
     }
 
     public Boolean getProcessorInputFluid(FluidStack stack)

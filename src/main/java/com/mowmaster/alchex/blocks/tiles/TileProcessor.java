@@ -17,8 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 
-import static com.mowmaster.alchex.blocks.liquids.LiquidBasic.fluidSunlight;
-
 
 public class TileProcessor extends TileEntity implements ITickable
 {
@@ -26,7 +24,10 @@ public class TileProcessor extends TileEntity implements ITickable
     public FluidTank tank = new FluidTank(4000);
     public ItemStack itemStackInput = ItemStack.EMPTY;
     public ItemStack itemStackOutput = ItemStack.EMPTY;
-    public boolean running=false;
+    public int ticker = 0;
+    private int progress=0;//800ticks per process
+
+    public boolean running=true;
 
 
 
@@ -47,6 +48,7 @@ public class TileProcessor extends TileEntity implements ITickable
 
     public void updateBlock()
     {
+        running=true;
         markDirty();
         IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);
@@ -112,6 +114,7 @@ public class TileProcessor extends TileEntity implements ITickable
                 tank.drain(new FluidStack(tank.getFluid(),Fluid.BUCKET_VOLUME),true);
                 playerOutput = FluidUtil.getFilledBucket(new FluidStack(tank.getFluid().getFluid(),Fluid.BUCKET_VOLUME));
                 world.playSound(null, pos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 0.3F, 0.5F);
+                updateBlock();
                 return true;
             }
             else if(tank.getFluidAmount()==Fluid.BUCKET_VOLUME)
@@ -119,6 +122,7 @@ public class TileProcessor extends TileEntity implements ITickable
                 playerOutput = FluidUtil.getFilledBucket(new FluidStack(tank.getFluid().getFluid(),Fluid.BUCKET_VOLUME));
                 tank.setFluid(null);
                 world.playSound(null, pos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 0.3F, 0.5F);
+                updateBlock();
                 return true;
             }
 
@@ -130,7 +134,7 @@ public class TileProcessor extends TileEntity implements ITickable
                     tank.fill(new FluidStack(inputFluid.getFluid(),amountOfFluid),true);
                     playerOutput = new ItemStack(Items.BUCKET);
                     world.playSound(null, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 0.3F, 0.5F);
-
+                    updateBlock();
                     return true;
                 }
                 else if(tank.getCapacity()-tank.getFluidAmount()>=amountOfFluid && tank.getFluid().isFluidEqual(input))
@@ -138,7 +142,7 @@ public class TileProcessor extends TileEntity implements ITickable
                     tank.fill(new FluidStack(inputFluid.getFluid(),amountOfFluid),true);
                     playerOutput = new ItemStack(Items.BUCKET);
                     world.playSound(null, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 0.3F, 0.5F);
-
+                    updateBlock();
                     return true;
                 }
                 else if (tank.getCapacity()-tank.getFluidAmount()<amountOfFluid || !tank.canFill())
@@ -157,11 +161,82 @@ public class TileProcessor extends TileEntity implements ITickable
         if(!itemStackOutput.isEmpty())
         {
             playerOutput = itemStackOutput;
-
+            updateBlock();
             return playerOutput;
         }
         return ItemStack.EMPTY;
     }
+
+    private boolean adjustInputStack()
+    {
+        ItemStack newInput = ItemStack.EMPTY;
+        if(itemStackInput.getCount()>1)
+        {
+            newInput = new ItemStack(itemStackInput.getItem(),itemStackInput.getCount()-1,itemStackInput.getMetadata());
+            itemStackInput=newInput;
+            return true;
+        }
+        else
+        {
+            newInput = ItemStack.EMPTY;
+            itemStackInput=newInput;
+            return true;
+        }
+    }
+
+    private boolean adjustOutputStack()
+    {
+        if(itemStackOutput.getCount()==0 || itemStackOutput.isEmpty())
+        {
+            ItemStack newItemOutput = outputItem();
+            itemStackOutput=newItemOutput;
+            return true;
+        }
+        else if(outputItem().equals(itemStackOutput) && itemStackOutput.getCount()>64)
+        {
+            ItemStack newItemOutput = new ItemStack(outputItem().getItem(),itemStackOutput.getCount()+1,outputItem().getMetadata());
+            itemStackOutput=newItemOutput;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private boolean adjustFluidTank()
+    {
+        if(!itemStackInput.isEmpty())
+        {
+            if(tank.getFluidAmount()>ProcessorRecipes.instance().getProcessorInputFluidFromInputItem(itemStackInput).amount)
+            {
+                tank.drain(new FluidStack(tank.getFluid(),ProcessorRecipes.instance().getProcessorInputFluidFromInputItem(itemStackInput).amount),true);
+            }
+            else if(tank.getFluidAmount()==ProcessorRecipes.instance().getProcessorInputFluidFromInputItem(itemStackInput).amount)
+            {
+                tank.setFluid(null);
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void process()
+    {
+        if(adjustFluidTank() && adjustInputStack() && adjustOutputStack())
+        {
+            running=true;
+            updateBlock();
+        }
+        else
+        {
+            running = false;
+        }
+    }
+
 
 
 
@@ -170,17 +245,28 @@ public class TileProcessor extends TileEntity implements ITickable
     @Override
     public void update()
     {
-        int ticker=0;
+        int tickers=0;
+        int ticked=0;
 
-        if(!itemStackInput.isEmpty())
+        if(running)
         {
             ticker++;
+            tickers++;
         }
 
-        if(ticker>=20)
+        if(tickers>=20)
         {
+            ticked++;
+            updateBlock();
+            tickers=0;
+        }
+
+        if(ticker>=200)
+        {
+            process();
             ticker=0;
-            outputItem();
+            ticked=0;
+            tickers=0;
         }
     }
 
@@ -195,6 +281,7 @@ public class TileProcessor extends TileEntity implements ITickable
         compound.setTag("itemOutput",itemStackOutput.writeToNBT(new NBTTagCompound()));
         NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
         compound.setTag("tank", tankTag);
+        compound.setInteger("ticker",ticker);
         return compound;
     }
 
@@ -209,6 +296,7 @@ public class TileProcessor extends TileEntity implements ITickable
         NBTTagCompound itemTag2 = compound.getCompoundTag("itemOutput");
         this.itemStackOutput = new ItemStack(itemTag2);
         this.tank.readFromNBT(compound.getCompoundTag("tank"));
+        this.ticker=compound.getInteger("ticker");
         if(amount>0)
         {
             FluidStack thisTank = new FluidStack(tank.getFluid().getFluid(),amount);
