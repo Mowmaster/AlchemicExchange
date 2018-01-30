@@ -3,7 +3,6 @@ package com.mowmaster.alchex.blocks;
 import com.mowmaster.alchex.blocks.tiles.TileCollector;
 import com.mowmaster.alchex.references.Reference;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -11,27 +10,18 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
@@ -118,34 +108,27 @@ public class BlockCollector extends Block implements ITileEntityProvider
                         if(tileCollector.removeItem())
                         {
                             playerIn.inventory.addItemStackToInventory(new ItemStack(tileCollector.itemStack.getItem(),1));
+                            return true;
                         }
-
-
                     }
-                    System.out.println("Fluid Ammount: " + tileCollector.tank.getFluidAmount());
-                    System.out.println("Item Durability: " + tileCollector.durability);
 
                 }
                 else if(tileCollector.tank.getFluidAmount()>=1000 && playerIn.getHeldItem(hand).getItem().equals(Items.BUCKET))
                 {
-                    //ItemStack heldItem = playerIn.getHeldItem(hand);
-                    //FluidActionResult far = FluidUtil.tryFillContainerAndStow(heldItem, tileCollector.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.DOWN), new InvWrapper(playerIn.inventory), 1000, playerIn);
-
                     ItemStack bucket = FluidUtil.getFilledBucket(new FluidStack(tileCollector.getLiquidOutput(tileCollector.itemStack),Fluid.BUCKET_VOLUME));
                     playerIn.getHeldItem(hand).shrink(1);
                     if (playerIn.getHeldItem(hand).isEmpty())
                     {
-
-
                             playerIn.setHeldItem(hand, bucket);
                             tileCollector.removeFluid();
-
+                            return true;
                     }
                     else if (!playerIn.getHeldItem(hand).isEmpty())
                     {
                         //if(far.isSuccess()) {
                         playerIn.inventory.addItemStackToInventory(bucket);
                         tileCollector.removeFluid();
+                        return true;
                         //}
 
                     }
@@ -153,6 +136,7 @@ public class BlockCollector extends Block implements ITileEntityProvider
                     {
                         playerIn.dropItem(bucket, false);
                         tileCollector.removeFluid();
+                        return true;
                     }
                 }
                 else if(tileCollector.tank.getFluidAmount()==0)
@@ -160,6 +144,7 @@ public class BlockCollector extends Block implements ITileEntityProvider
                     if(tileCollector.addItem(playerIn.getHeldItem(hand)))
                     {
                         playerIn.getHeldItem(hand).shrink(1);
+                        return true;
                     }
                 }
                 else if(tileCollector.areFluidsEqual(playerIn.getHeldItem(hand)))
@@ -167,6 +152,7 @@ public class BlockCollector extends Block implements ITileEntityProvider
                     if(tileCollector.addItem(playerIn.getHeldItem(hand)))
                     {
                         playerIn.getHeldItem(hand).shrink(1);
+                        return true;
                     }
                 }
             }

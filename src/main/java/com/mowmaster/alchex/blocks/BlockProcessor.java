@@ -1,7 +1,5 @@
 package com.mowmaster.alchex.blocks;
 
-import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
-import com.mowmaster.alchex.blocks.tiles.TileCollector;
 import com.mowmaster.alchex.blocks.tiles.TileProcessor;
 import com.mowmaster.alchex.recipes.ProcessorRecipes;
 import com.mowmaster.alchex.references.Reference;
@@ -24,14 +22,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.Sys;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -48,11 +45,6 @@ public class BlockProcessor extends Block implements ITileEntityProvider
         this.setRegistryName(new ResourceLocation(Reference.MODID, registryName));
     }
 
-    @Override
-    public Item getItemDropped(IBlockState state, Random random, int fortune)
-    {
-        return Item.getItemFromBlock(this);
-    }
 
     @Override
     public boolean isTopSolid(IBlockState state) {
@@ -109,16 +101,7 @@ public class BlockProcessor extends Block implements ITileEntityProvider
         return true;
     }
 
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileProcessor();
-    }
 
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileProcessor();
-    }
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
@@ -131,43 +114,111 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                 TileProcessor tileProcessor = (TileProcessor) tileEntity;
                 ItemStack input = playerIn.getHeldItem(hand);
 
-
-
-                if(playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking() && !(facing==EnumFacing.UP))
+                if(playerIn.getHeldItem(hand).getItem() instanceof ItemBucket || playerIn.getHeldItem(hand).getItem() instanceof UniversalBucket && input.getItem()!=Items.BUCKET)
                 {
-                    System.out.println(tileProcessor.itemStackInput.getDisplayName());
-                    System.out.println(tileProcessor.itemStackInput.getCount());
-
-                    if(!(tileProcessor.tank==null))
+                    if(tileProcessor.onFluidInteract(input))
                     {
-                        System.out.println(tileProcessor.tank.getFluid());
+                        System.out.println("BLARRRRRG!!!");
+                        playerIn.getHeldItem(hand).shrink(1);
+                        if (playerIn.getHeldItem(hand).isEmpty())
+                        {
+                            playerIn.setHeldItem(hand, tileProcessor.playerOutput);
+                            System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
+                            System.out.println(tileProcessor.tank.getFluidAmount());
+                            return true;
+                        }
+                        else if (!playerIn.getHeldItem(hand).isEmpty())
+                        {
+                            playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
+                            System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
+                            System.out.println(tileProcessor.tank.getFluidAmount());
+                            return true;
+                        }
+                        else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
+                        {
+                            playerIn.dropItem(tileProcessor.playerOutput, false);
+                            System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
+                            System.out.println(tileProcessor.tank.getFluidAmount());
+                            return true;
+                        }
+
+                    }
+                }
+                else if (input.getItem().equals(Items.BUCKET))
+                {
+                    tileProcessor.onFluidInteract(input);
+                    playerIn.getHeldItem(hand).shrink(1);
+                    if (playerIn.getHeldItem(hand).isEmpty())
+                    {
+                        playerIn.setHeldItem(hand, tileProcessor.playerOutput);
+                        System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
                         System.out.println(tileProcessor.tank.getFluidAmount());
+                        return true;
+                    }
+                    else if (!playerIn.getHeldItem(hand).isEmpty())
+                    {
+                        playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
+                        System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
+                        System.out.println(tileProcessor.tank.getFluidAmount());
+                        return true;
+                    }
+                    else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
+                    {
+                        playerIn.dropItem(tileProcessor.playerOutput, false);
+                        System.out.println(tileProcessor.tank.getFluid().getUnlocalizedName());
+                        System.out.println(tileProcessor.tank.getFluidAmount());
+                        return true;
                     }
 
 
                 }
 
-                else if (!playerIn.getHeldItem(hand).isEmpty() && facing==EnumFacing.UP)
+                //if player is sneaking and have an empty hand they get the items out of the input
+                else if(playerIn.isSneaking())
+                {
+                    if (playerIn.getHeldItem(hand).isEmpty())
+                    {
+                        playerIn.setHeldItem(hand, tileProcessor.onItemRemoved());
+                        return true;
+                    }
+
+                }
+                //if player has items in hand, check if they work in machine and if so input them
+                else if (!playerIn.getHeldItem(hand).isEmpty())
                 {
                     if(tileProcessor.onItemAdded(input))
                     {
                         playerIn.getHeldItem(hand).shrink(tileProcessor.itemToShrink);
                     }
-
                 }
-
-                else if(playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking() && facing==EnumFacing.UP)
+                //if empty hand get all output items available
+                else if(playerIn.getHeldItem(hand).isEmpty())
                 {
-                    playerIn.inventory.addItemStackToInventory(tileProcessor.onItemRemoved());
+                    playerIn.setHeldItem(hand, tileProcessor.onOutputRemoved());
+                    return true;
                 }
-
-                else if(playerIn.getHeldItem(hand).getItem() instanceof ItemBucket || playerIn.getHeldItem(hand).getItem() instanceof UniversalBucket)
-                {
-                    System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-                }
+//Fluid Handling
 
             }
         }
         return false;
+    }
+
+
+    @Override
+    public Item getItemDropped(IBlockState state, Random random, int fortune)
+    {
+        return Item.getItemFromBlock(this);
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TileProcessor();
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileProcessor();
     }
 }

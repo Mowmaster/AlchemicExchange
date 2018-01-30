@@ -4,7 +4,9 @@ package com.mowmaster.alchex.proxies;
 import com.mowmaster.alchex.blocks.BlockRegistry;
 import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
 import com.mowmaster.alchex.blocks.tiles.TileCollector;
+import com.mowmaster.alchex.blocks.tiles.TileProcessor;
 import com.mowmaster.alchex.blocks.tiles.TileRenders.RenderCollector;
+import com.mowmaster.alchex.blocks.tiles.TileRenders.RenderProcessor;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -27,6 +29,7 @@ public class ClientProxy extends CommonProxy
 
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileCollector.class,new RenderCollector());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileProcessor.class,new RenderProcessor());
     }
 
     @Override

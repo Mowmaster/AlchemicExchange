@@ -3,6 +3,7 @@ package com.mowmaster.alchex.blocks.tiles;
 import com.mowmaster.alchex.recipes.CollectorRecipes;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -27,10 +28,18 @@ public class TileCollector extends TileEntity implements ITickable
     private int ammount=0;
     public boolean running=false;
 
-    public final int fluidTickrate=1;//ticks per mb --- include in recipe handler??? ___ Default 12
+    public final int fluidTickrate=6;//ticks per mb --- include in recipe handler??? ___ Default 12
     public int durability=0;
 
-    public Fluid getLiquidOutput(ItemStack itemStack){return CollectorRecipes.instance().getCollectorResult(itemStack).getFluid();}
+
+    public Fluid getLiquidOutput(ItemStack itemStack)
+    {
+        if(tank.getFluid()!=null)
+        {
+            return CollectorRecipes.instance().getCollectorResult(itemStack).getFluid();
+        }
+        return null;
+    }
     public ItemStack getItemInBlock(){return itemStack;}
     public boolean areFluidsEqual(ItemStack itemStack){return tank.getFluid().getFluid()==getLiquidOutput(itemStack);}
 
@@ -114,40 +123,87 @@ public class TileCollector extends TileEntity implements ITickable
         if (tank.getFluidAmount() >= 1000) {
             world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 0.2, 0.2, 0.2, new int[0]);
         }
-        else if (tank.getFluidAmount() < 1000 && running==true) {
+        else if (tank.getFluidAmount() < 1000 && running==true && ticker>0) {
             world.spawnParticle(EnumParticleTypes.WATER_SPLASH, pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5, 0.2, 0.2, 0.2, new int[0]);
         }
         if (!this.world.isRemote)
         {
-
-            if(running==true && !(tank.getFluidAmount()>=1000))
+            if (itemStack.getItem().equals(Items.GLOWSTONE_DUST) && world.canSeeSky(pos) && world.isDaytime())
             {
-                if (durability>0)
+                if(running==true && !(tank.getFluidAmount()>=1000))
                 {
-                    ticker++;
-                    if(ticker>=fluidTickrate)
+                    if (durability>0)
                     {
+                        ticker++;
+                        if(ticker>=fluidTickrate)
+                        {
 
-                        durability--;
-                        tank.fill(new FluidStack(getLiquidOutput(itemStack),1),true);
-                        ticker=0;
+                            durability--;
+                            tank.fill(new FluidStack(getLiquidOutput(itemStack),1),true);
+                            ticker=0;
+                            markDirty();
+                            IBlockState state = world.getBlockState(pos);
+                            world.notifyBlockUpdate(pos,state,state,3);
+                        }
+                    }
+                    else {
+                        breakItem();
                         markDirty();
                         IBlockState state = world.getBlockState(pos);
-                        world.notifyBlockUpdate(pos,state,state,3);
-                    }
+                        world.notifyBlockUpdate(pos,state,state,3);}
                 }
-                else {
-                    breakItem();
+            }
+            else if(itemStack.getItem().equals(Items.QUARTZ) && world.canSeeSky(pos) && !(world.isDaytime()))
+            {
+                if(running==true && !(tank.getFluidAmount()>=1000))
+                {
+                    if (durability>0)
+                    {
+                        ticker++;
+                        if(ticker>=fluidTickrate)
+                        {
+
+                            durability--;
+                            tank.fill(new FluidStack(getLiquidOutput(itemStack),1),true);
+                            ticker=0;
+                            markDirty();
+                            IBlockState state = world.getBlockState(pos);
+                            world.notifyBlockUpdate(pos,state,state,3);
+                        }
+                    }
+                    else {
+                        breakItem();
+                        markDirty();
+                        IBlockState state = world.getBlockState(pos);
+                        world.notifyBlockUpdate(pos,state,state,3);}
+                }
+            }
+            else if(!itemStack.getItem().equals(Items.QUARTZ) || !itemStack.getItem().equals(Items.GLOWSTONE_DUST) && world.canSeeSky(pos)) {
+                if (running == true && !(tank.getFluidAmount() >= 1000)) {
+                    if (durability > 0) {
+                        ticker++;
+                        if (ticker >= fluidTickrate) {
+
+                            durability--;
+                            tank.fill(new FluidStack(getLiquidOutput(itemStack), 1), true);
+                            ticker = 0;
+                            markDirty();
+                            IBlockState state = world.getBlockState(pos);
+                            world.notifyBlockUpdate(pos, state, state, 3);
+                        }
+                    } else {
+                        breakItem();
+                        markDirty();
+                        IBlockState state = world.getBlockState(pos);
+                        world.notifyBlockUpdate(pos, state, state, 3);
+                    }
+                } else {
+                    running = false;
                     markDirty();
                     IBlockState state = world.getBlockState(pos);
-                    world.notifyBlockUpdate(pos,state,state,3);}
+                    world.notifyBlockUpdate(pos, state, state, 3);
+                }
             }
-            else{
-                running=false;
-                markDirty();
-                IBlockState state = world.getBlockState(pos);
-                world.notifyBlockUpdate(pos,state,state,3);}
-
 
         }
 

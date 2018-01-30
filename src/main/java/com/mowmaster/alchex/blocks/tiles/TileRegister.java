@@ -11,5 +11,6 @@ public class TileRegister
     public static void registerTile()
     {
         GameRegistry.registerTileEntity(TileCollector.class, Reference.MODID + "tilecollector");
+        GameRegistry.registerTileEntity(TileProcessor.class, Reference.MODID + "tileprocessor");
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.HashMap;
@@ -65,12 +66,15 @@ public class ProcessorRecipes
 
         this.addProcessorRecipe(new ItemStack(Blocks.SOUL_SAND,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.NETHERRACK,1,0));
         this.addProcessorRecipe(new ItemStack(Blocks.SAND,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.GRAVEL,1,0));
-        this.addProcessorRecipe(new ItemStack(Blocks.GRAVEL,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.COBBLESTONE,1,0));
-        this.addProcessorRecipe(new ItemStack(Blocks.COBBLESTONE,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.STONE,1,0));
-        this.addProcessorRecipe(new ItemStack(Blocks.STONE,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.STONEBRICK,1,0));
-        this.addProcessorRecipe(new ItemStack(Blocks.BRICK_BLOCK,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.STONEBRICK,1,3));
+        //this.addProcessorRecipe(new ItemStack(Blocks.GRAVEL,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.COBBLESTONE,1,0));
+        //this.addProcessorRecipe(new ItemStack(Blocks.COBBLESTONE,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.STONE,1,0));
+        //this.addProcessorRecipe(new ItemStack(Blocks.STONE,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.STONEBRICK,1,0));
+        //this.addProcessorRecipe(new ItemStack(Blocks.BRICK_BLOCK,1,0),new FluidStack(fluidSunlight,10),new ItemStack(Blocks.STONEBRICK,1,3));
 
-        this.addProcessorRecipe(new ItemStack(Items.STICK,1,0),new FluidStack(fluidSunlight,50),new ItemStack(Blocks.TORCH,1,0));
+        this.addProcessorRecipe(new ItemStack(Items.STICK,1,0),new FluidStack(FluidRegistry.LAVA,50),new ItemStack(Blocks.TORCH,1,0));
+
+
+        //add seeds to crops and animal drops to animal meat
     }
 
 
@@ -115,7 +119,7 @@ public class ProcessorRecipes
         return ItemStack.EMPTY;
     }
 
-    public ItemStack getProcessorInputFluid(FluidStack stack)
+    public ItemStack getProcessorInputFluidItem(FluidStack stack)
     {
         for (Map.Entry<ItemStack, ProcessorHash> entry : this.processorList.entrySet())
         {
@@ -126,6 +130,19 @@ public class ProcessorRecipes
         }
 
         return ItemStack.EMPTY;
+    }
+
+    public Boolean getProcessorInputFluid(FluidStack stack)
+    {
+        for (Map.Entry<ItemStack, ProcessorHash> entry : this.processorList.entrySet())
+        {
+            if (stack.isFluidEqual(entry.getValue().getFluidInput()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
