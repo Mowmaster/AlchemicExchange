@@ -7,10 +7,15 @@ import com.mowmaster.alchex.blocks.tiles.TileCollector;
 import com.mowmaster.alchex.blocks.tiles.TileProcessor;
 import com.mowmaster.alchex.blocks.tiles.TileRenders.RenderCollector;
 import com.mowmaster.alchex.blocks.tiles.TileRenders.RenderProcessor;
+import com.mowmaster.alchex.references.Reference;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,12 +29,15 @@ public class ClientProxy extends CommonProxy
     @SideOnly(Side.CLIENT)
     public void PreInit()
     {
-        //registerFluidRenderers();
         BlockRegistry.registerRenders();
 
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileCollector.class,new RenderCollector());
         ClientRegistry.bindTileEntitySpecialRenderer(TileProcessor.class,new RenderProcessor());
+
+
+
+
     }
 
     @Override

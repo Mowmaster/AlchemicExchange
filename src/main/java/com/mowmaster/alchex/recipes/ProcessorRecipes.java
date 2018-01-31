@@ -1,20 +1,14 @@
 package com.mowmaster.alchex.recipes;
 
 import com.google.common.collect.Maps;
-import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
 import com.mowmaster.alchex.recipes.HashMaps.ProcessorHash;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.mowmaster.alchex.blocks.liquids.LiquidBasic.fluidMoonlight;
