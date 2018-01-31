@@ -32,7 +32,7 @@ public class CollectorRecipes
     private CollectorRecipes()
     {
         //this.addCollectorRecipeForItem(Items.NETHERBRICK, new FluidStack(FluidRegistry.LAVA,1));
-        this.addCollectorRecipeForItem(Items.APPLE, new FluidStack(FluidRegistry.WATER,1));
+        //this.addCollectorRecipeForItem(Items.APPLE, new FluidStack(FluidRegistry.WATER,1));
         this.addCollectorRecipeForItem(Items.GLOWSTONE_DUST, new FluidStack(LiquidBasic.fluidSunlight,1));
         this.addCollectorRecipeForItem(Items.QUARTZ, new FluidStack(LiquidBasic.fluidMoonlight,1));
     }
@@ -91,7 +91,6 @@ public class CollectorRecipes
                 return entry.getValue();
             }
         }
-
         return null;
     }
 

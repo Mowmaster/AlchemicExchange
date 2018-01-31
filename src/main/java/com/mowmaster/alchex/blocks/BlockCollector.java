@@ -103,15 +103,14 @@ public class BlockCollector extends Block implements ITileEntityProvider
 
                 if (playerIn.getHeldItem(hand).isEmpty())
                 {
-                    if(playerIn.isSneaking())
+                    if (playerIn.isSneaking())
                     {
                         if(tileCollector.removeItem())
                         {
-                            playerIn.inventory.addItemStackToInventory(new ItemStack(tileCollector.itemStack.getItem(),1));
-                            return true;
+                            playerIn.inventory.addItemStackToInventory(new ItemStack(tileCollector.itemStack.getItem(),1))
+                            ;return true;
                         }
                     }
-
                 }
                 else if(tileCollector.tank.getFluidAmount()>=1000 && playerIn.getHeldItem(hand).getItem().equals(Items.BUCKET))
                 {
@@ -139,21 +138,10 @@ public class BlockCollector extends Block implements ITileEntityProvider
                         return true;
                     }
                 }
-                else if(tileCollector.tank.getFluidAmount()==0)
+                else if(tileCollector.addItem(playerIn.getHeldItem(hand)))
                 {
-                    if(tileCollector.addItem(playerIn.getHeldItem(hand)))
-                    {
-                        playerIn.getHeldItem(hand).shrink(1);
-                        return true;
-                    }
-                }
-                else if(tileCollector.areFluidsEqual(playerIn.getHeldItem(hand)))
-                {
-                    if(tileCollector.addItem(playerIn.getHeldItem(hand)))
-                    {
-                        playerIn.getHeldItem(hand).shrink(1);
-                        return true;
-                    }
+                    playerIn.getHeldItem(hand).shrink(1);
+                    return true;
                 }
             }
         }

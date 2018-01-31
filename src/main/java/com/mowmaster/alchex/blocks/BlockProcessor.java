@@ -113,10 +113,31 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                 TileProcessor tileProcessor = (TileProcessor) tileEntity;
                 ItemStack input = playerIn.getHeldItem(hand);
 
-                if(playerIn.getHeldItem(hand).getItem() instanceof ItemBucket || playerIn.getHeldItem(hand).getItem() instanceof UniversalBucket && input.getItem()!=Items.BUCKET)
+                if(playerIn.getHeldItem(hand).getItem() instanceof ItemBucket || playerIn.getHeldItem(hand).getItem() instanceof UniversalBucket)
                 {
-                    if(tileProcessor.onFluidInteract(input))
+                    if(input.getItem()!=Items.BUCKET && tileProcessor.onFluidInteract(input))
                     {
+                        playerIn.getHeldItem(hand).shrink(1);
+                        if (playerIn.getHeldItem(hand).isEmpty())
+                        {
+                            playerIn.setHeldItem(hand, tileProcessor.playerOutput);
+                            return false;
+                        }
+                        else if (!playerIn.getHeldItem(hand).isEmpty())
+                        {
+                            playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
+                            return false;
+                        }
+                        else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
+                        {
+                            playerIn.dropItem(tileProcessor.playerOutput, false);
+                            return false;
+                        }
+
+                    }
+                    else
+                    {
+                        tileProcessor.onFluidInteract(input);
                         playerIn.getHeldItem(hand).shrink(1);
                         if (playerIn.getHeldItem(hand).isEmpty())
                         {
@@ -133,32 +154,8 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                             playerIn.dropItem(tileProcessor.playerOutput, false);
                             return true;
                         }
-
                     }
                 }
-                else if (input.getItem().equals(Items.BUCKET))
-                {
-                    tileProcessor.onFluidInteract(input);
-                    playerIn.getHeldItem(hand).shrink(1);
-                    if (playerIn.getHeldItem(hand).isEmpty())
-                    {
-                        playerIn.setHeldItem(hand, tileProcessor.playerOutput);
-                        return true;
-                    }
-                    else if (!playerIn.getHeldItem(hand).isEmpty())
-                    {
-                        playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
-                        return true;
-                    }
-                    else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
-                    {
-                        playerIn.dropItem(tileProcessor.playerOutput, false);
-                        return true;
-                    }
-
-
-                }
-
                 //if player is sneaking and have an empty hand they get the items out of the input
                 else if(playerIn.isSneaking())
                 {
@@ -170,7 +167,7 @@ public class BlockProcessor extends Block implements ITileEntityProvider
 
                 }
                 //if player has items in hand, check if they work in machine and if so input them
-                else if (!playerIn.getHeldItem(hand).isEmpty())
+                else if (!playerIn.getHeldItem(hand).isEmpty() && facing.equals(EnumFacing.UP))
                 {
                     if(tileProcessor.onItemAdded(input))
                     {
@@ -178,7 +175,7 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                     }
                 }
                 //if empty hand get all output items available
-                else if(playerIn.getHeldItem(hand).isEmpty())
+                else if(playerIn.getHeldItem(hand).isEmpty() && !facing.equals(EnumFacing.UP))
                 {
                     playerIn.setHeldItem(hand, tileProcessor.onOutputRemoved());
                     return true;

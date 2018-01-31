@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
@@ -52,7 +53,7 @@ public class RenderProcessor extends TileEntitySpecialRenderer<TileProcessor>
         else if(te.itemStackInput.getCount()>=48)
         {renderItemInput(itemRenderer,itemStackInput,0.215f,1f,0.25f,0f,0f,0f,0f);renderItemInput(itemRenderer,itemStackInput,0.345f,1f,0.25f,0f,0f,0f,0f);renderItemInput(itemRenderer,itemStackInput,0.28125f,1f,0.375f,0f,0f,0f,0f);renderItemInput(itemRenderer,itemStackInput,0.28125f,1.125f,0.28125f,0f,0f,0f,0f);}
         //Renders Output Stack
-        else if(te.itemStackOutput.getCount()<16 && te.itemStackOutput.getCount()>0)
+        if(te.itemStackOutput.getCount()<16 && te.itemStackOutput.getCount()>0)
         {renderItemOutput(itemRenderer,itemStackOutput,0.59375f,0.125f,0.59375f,0f,0f,0f,0f);}
         else if(te.itemStackOutput.getCount()<32 && te.itemStackOutput.getCount()>=16)
         {renderItemOutput(itemRenderer,itemStackOutput,0.50f,0.125f,0.59375f,0f,0f,0f,0f);renderItemOutput(itemRenderer,itemStackOutput,0.6875f,0.125f,0.59375f,0f,0f,0f,0f);}
@@ -192,6 +193,7 @@ public class RenderProcessor extends TileEntitySpecialRenderer<TileProcessor>
             //GlStateManager.enableAlpha();
             BufferBuilder renderer = tessellator.getBuffer();
             ResourceLocation still = renderFluid.getFluid().getStill();
+
             TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
 
             net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
@@ -210,10 +212,10 @@ public class RenderProcessor extends TileEntitySpecialRenderer<TileProcessor>
             float yHeight = 0.45f;
 
             //tankRight
-            renderer.pos(0.1f,  scale+yHeight,     0.95f).tex(u1, v1).color(color, color, color, alpha).endVertex();
-            renderer.pos(0.1f,  yHeight,           0.95f).tex(u1, v2).color(color, color, color, alpha).endVertex();
-            renderer.pos(0.25f, yHeight,           0.95f).tex(u2, v2).color(color, color, color, alpha).endVertex();
-            renderer.pos(0.25f,  scale+yHeight,    0.95f).tex(u2, v1).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.8125f,  scale+yHeight,     0.8125f).tex(u1, v1).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.8125f,  yHeight,           0.8125f).tex(u1, v2).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.8125f, yHeight,           0.375f).tex(u2, v2).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.8125f,  scale+yHeight,    0.375f).tex(u2, v1).color(color, color, color, alpha).endVertex();
 
             //tankTop
             renderer.pos(0.375f, scale+yHeight, 0.375f).tex(u1, v1).color(color, color, color, alpha).endVertex();
@@ -229,10 +231,10 @@ public class RenderProcessor extends TileEntitySpecialRenderer<TileProcessor>
              */
 
             //tankFront
-            renderer.pos(0.5f,  scale+yHeight,     0.8f).tex(u1, v1).color(color, color, color, alpha).endVertex();
-            renderer.pos(0.5f,  yHeight,           0.8f).tex(u1, v2).color(color, color, color, alpha).endVertex();
-            renderer.pos(0.75f, yHeight,           0.8f).tex(u2, v2).color(color, color, color, alpha).endVertex();
-            renderer.pos(0.75f,  scale+yHeight,    0.8f).tex(u2, v1).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.375f,  scale+yHeight,     0.8f).tex(u1, v1).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.375f,  yHeight,           0.8f).tex(u1, v2).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.8125f, yHeight,           0.8f).tex(u2, v2).color(color, color, color, alpha).endVertex();
+            renderer.pos(0.8125f,  scale+yHeight,    0.8f).tex(u2, v1).color(color, color, color, alpha).endVertex();
 
 
 

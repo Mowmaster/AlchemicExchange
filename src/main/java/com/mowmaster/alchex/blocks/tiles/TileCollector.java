@@ -43,7 +43,13 @@ public class TileCollector extends TileEntity implements ITickable
     public ItemStack getItemInBlock(){return itemStack;}
     public boolean areFluidsEqual(ItemStack itemStack){return tank.getFluid().isFluidEqual(getLiquidOutput(itemStack));}
 
-
+    public void updateBlock()
+    {
+        running=true;
+        markDirty();
+        IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 3);
+    }
 
     private int itemWearValue()
     {
@@ -55,23 +61,26 @@ public class TileCollector extends TileEntity implements ITickable
     public boolean addItem(ItemStack itemname)
     {
         itemStack = CollectorRecipes.instance().getCollectorInput(itemname);
-        if(!itemStack.isEmpty() && tank.canFill() && running==false && tank.getFluidAmount()==0)
+        if(!itemStack.isEmpty())
         {
-            running=true;
-            durability=itemWearValue();
-            itemWearValue();
-            return true;
-        }
-        else if (itemStack.isEmpty() && tank.canFill() && running==false)
-        {
-            if(this.areFluidsEqual(itemStack))
+            if(tank.getFluid()==null)
             {
-                running=true;
                 durability=itemWearValue();
+                running=true;
+                updateBlock();
                 return true;
             }
-            return false;
-
+            else if (tank.getFluid().equals(getLiquidOutput(itemStack)) && tank.canFill())
+            {
+                durability=itemWearValue();
+                running=true;
+                updateBlock();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         return false;
     }
@@ -80,10 +89,9 @@ public class TileCollector extends TileEntity implements ITickable
     {
         if(!(this.areFluidsEqual(itemStack)))
         {
-            //Return item from here and just check if stack is empty instead
-            //worldIn.spawnEntity(new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, itemStack));
             itemStack=ItemStack.EMPTY;
             running=false;
+            updateBlock();
             return true;
         }
         return false;
@@ -93,6 +101,7 @@ public class TileCollector extends TileEntity implements ITickable
     {
         itemStack=ItemStack.EMPTY;
         running=false;
+        updateBlock();
         return true;
     }
 
@@ -102,21 +111,20 @@ public class TileCollector extends TileEntity implements ITickable
         {
             tank.drain(new FluidStack(getLiquidOutput(itemStack).getFluid(),1000),true);
             running=true;
-            markDirty();
-            IBlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos,state,state,3);
+            updateBlock();
+            return true;
         }
         else
         {
             tank.drain(new FluidStack(getLiquidOutput(itemStack).getFluid(),1000),true);
             tank.setFluid(null);
             running=false;
+            updateBlock();
+            return true;
         }
-        markDirty();
-        IBlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos,state,state,3);
-        return true;
     }
+
+
     private int ticker=0;
     public void update()
     {
@@ -132,23 +140,60 @@ public class TileCollector extends TileEntity implements ITickable
                 {
                     if (durability>0)
                     {
-                        ticker++;
-                        if(ticker>=fluidTickrate)
+                        if(world.canSeeSky(pos))
                         {
 
-                            durability--;
-                            tank.fill(new FluidStack(getLiquidOutput(itemStack),1),true);
-                            ticker=0;
-                            markDirty();
-                            IBlockState state = world.getBlockState(pos);
-                            world.notifyBlockUpdate(pos,state,state,3);
+                            if(world.isDaytime())
+                            {
+                                if(itemStack.getItem().equals(Items.GLOWSTONE_DUST))
+                                {
+                                    ticker++;
+                                    if(ticker>=fluidTickrate)
+                                    {
+                                        durability--;
+                                        tank.fill(new FluidStack(getLiquidOutput(itemStack).getFluid(),getLiquidOutput(itemStack).amount),true);
+                                        ticker=0;
+                                        //System.out.println("GGGGGGLLLLOOOOOWWWWSSSSTTTOOONNNEEE");
+                                        updateBlock();
+                                    }
+                                }
+                            }
+                            else if(!world.isDaytime())
+                            {
+                                if(itemStack.getItem().equals(Items.QUARTZ))
+                                {
+                                    ticker++;
+                                    if(ticker>=fluidTickrate)
+                                    {
+                                        durability--;
+                                        tank.fill(new FluidStack(getLiquidOutput(itemStack).getFluid(),getLiquidOutput(itemStack).amount),true);
+                                        ticker=0;
+                                        //System.out.println("QQQQQUUUUAAAAARRRRTTTTTTZZZZZ");
+                                        updateBlock();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(itemStack.getItem()!=Items.QUARTZ || itemStack.getItem()!=Items.GLOWSTONE_DUST)
+                                {
+                                    ticker++;
+                                    if(ticker>=fluidTickrate)
+                                    {
+                                        durability--;
+                                        tank.fill(new FluidStack(getLiquidOutput(itemStack).getFluid(),getLiquidOutput(itemStack).amount),true);
+                                        ticker=0;
+                                        updateBlock();
+                                    }
+                                }
+                            }
+
                         }
                     }
                     else {
                         breakItem();
-                        markDirty();
-                        IBlockState state = world.getBlockState(pos);
-                        world.notifyBlockUpdate(pos,state,state,3);}
+                        updateBlock();
+                    }
                 }
         }
 
@@ -206,14 +251,6 @@ public class TileCollector extends TileEntity implements ITickable
         return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
     }
 
-    /*
-    @Nonnull
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-        return TileEntity.INFINITE_EXTENT_AABB;
-    }
-     */
 
 
 

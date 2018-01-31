@@ -39,12 +39,16 @@ public class TileProcessor extends TileEntity implements ITickable
 
     public ItemStack inputMaterials(ItemStack input)
     {
-        return itemStackInput = ProcessorRecipes.instance().getProcessorInput(input);
+        return ProcessorRecipes.instance().getProcessorInput(input);
     }
+
     public ItemStack outputItem()
     {
-        return itemStackOutput = ProcessorRecipes.instance().getProcessorResult(itemStackInput, tank.getFluid());
+        return ProcessorRecipes.instance().getProcessorResult(itemStackInput, tank.getFluid());
     }
+
+
+
 
     public void updateBlock()
     {
@@ -60,7 +64,7 @@ public class TileProcessor extends TileEntity implements ITickable
         int itemToFillStack = 64 - itemStackInput.getCount();
         if(itemStackInput.isEmpty())
         {
-            itemStackInput = new ItemStack(ProcessorRecipes.instance().getProcessorInput(input).getItem(),input.getCount(),input.getItemDamage());
+            itemStackInput = new ItemStack(inputMaterials(input).getItem(),input.getCount(),input.getItemDamage());
             if(!itemStackInput.isEmpty())
             {
                 itemToShrink=input.getCount();
@@ -72,14 +76,14 @@ public class TileProcessor extends TileEntity implements ITickable
         {
             if(input.getCount()>itemToFillStack)
             {
-                itemStackInput = new ItemStack(ProcessorRecipes.instance().getProcessorInput(input).getItem(),64,input.getItemDamage());
+                itemStackInput = new ItemStack(inputMaterials(input).getItem(),64,input.getItemDamage());
                 itemToShrink = itemToFillStack;
                 updateBlock();
                 return true;
             }
             else
             {
-                itemStackInput = new ItemStack(ProcessorRecipes.instance().getProcessorInput(input).getItem(),itemStackInput.getCount()+input.getCount(),input.getItemDamage());
+                itemStackInput = new ItemStack(inputMaterials(input).getItem(),itemStackInput.getCount()+input.getCount(),input.getItemDamage());
                 itemToShrink = input.getCount();
                 updateBlock();
                 return true;
@@ -160,51 +164,57 @@ public class TileProcessor extends TileEntity implements ITickable
     {
         if(!itemStackOutput.isEmpty())
         {
-            playerOutput = itemStackOutput;
+            if(itemStackOutput.getMetadata()>0)
+            {
+                playerOutput = new ItemStack(itemStackOutput.getItem(),itemStackOutput.getCount(),itemStackOutput.getMetadata());
+            }
+            else
+            {
+                playerOutput = new ItemStack(itemStackOutput.getItem(),itemStackOutput.getCount());
+            }
+            //playerOutput = new ItemStack(itemStackOutput.getItem(),itemStackOutput.getCount(),itemStackOutput.getMetadata());
+            itemStackOutput = ItemStack.EMPTY;
             updateBlock();
             return playerOutput;
         }
         return ItemStack.EMPTY;
     }
 
-    private boolean adjustInputStack()
+    private void adjustInputStack()
     {
         ItemStack newInput = ItemStack.EMPTY;
         if(itemStackInput.getCount()>1)
         {
             newInput = new ItemStack(itemStackInput.getItem(),itemStackInput.getCount()-1,itemStackInput.getMetadata());
             itemStackInput=newInput;
-            return true;
         }
         else
         {
             newInput = ItemStack.EMPTY;
             itemStackInput=newInput;
-            return true;
         }
     }
 
-    private boolean adjustOutputStack()
+
+    private void adjustOutputStack()
     {
+        ItemStack newItemOutput = ItemStack.EMPTY;
+        int count = itemStackOutput.getCount();
         if(itemStackOutput.getCount()==0 || itemStackOutput.isEmpty())
         {
-            ItemStack newItemOutput = outputItem();
+            newItemOutput = outputItem();
             itemStackOutput=newItemOutput;
-            return true;
+            updateBlock();
         }
-        else if(outputItem().equals(itemStackOutput) && itemStackOutput.getCount()>64)
+        else if(outputItem().getItem().equals(itemStackOutput.getItem()) && 64>=count + outputItem().getCount())
         {
-            ItemStack newItemOutput = new ItemStack(outputItem().getItem(),itemStackOutput.getCount()+1,outputItem().getMetadata());
+            newItemOutput = new ItemStack(itemStackOutput.getItem(),count + (outputItem().getCount()),outputItem().getMetadata());
             itemStackOutput=newItemOutput;
-            return true;
-        }
-        else
-        {
-            return false;
+            updateBlock();
         }
     }
 
-    private boolean adjustFluidTank()
+    private void adjustFluidTank()
     {
         if(!itemStackInput.isEmpty())
         {
@@ -216,24 +226,19 @@ public class TileProcessor extends TileEntity implements ITickable
             {
                 tank.setFluid(null);
             }
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
 
     private void process()
     {
-        if(adjustFluidTank() && adjustInputStack() && adjustOutputStack())
+        if(!itemStackInput.isEmpty() && tank.getFluid()!=null)
         {
+            adjustOutputStack();
+            adjustFluidTank();
+            adjustInputStack();
+
             running=true;
             updateBlock();
-        }
-        else
-        {
-            running = false;
         }
     }
 
@@ -248,11 +253,15 @@ public class TileProcessor extends TileEntity implements ITickable
         int tickers=0;
         int ticked=0;
 
-        if(running)
+        if(tank.getFluid()!=null && !itemStackInput.isEmpty())
         {
-            ticker++;
-            tickers++;
+            if(!(outputItem()==ItemStack.EMPTY))
+            {
+                ticker++;
+                tickers++;
+            }
         }
+
 
         if(tickers>=20)
         {
@@ -263,10 +272,14 @@ public class TileProcessor extends TileEntity implements ITickable
 
         if(ticker>=200)
         {
-            process();
-            ticker=0;
-            ticked=0;
-            tickers=0;
+            if(tank.getFluid()!=null && !itemStackInput.isEmpty())
+            {
+                process();
+                ticker=0;
+                ticked=0;
+                tickers=0;
+            }
+
         }
     }
 
