@@ -1,0 +1,20 @@
+{
+  "parent": "alchex:recipes/root",
+  "rewards": {
+    "recipes": [
+      "alchex:machines/processor"
+    ]
+  },
+  "criteria": {
+    "has_iron_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:iron_ingot"
+          }
+        ]
+      }
+    }
+  }
+}
