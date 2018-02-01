@@ -3,8 +3,8 @@
   "group":"block_brick",
   "pattern": [
     "S S",
-    "SSS",
-    " B "
+    "SBS",
+    "SSS"
   ],
   "key": {
     "S": {
@@ -12,8 +12,7 @@
       "data": 0
     },
     "B": {
-      "item": "minecraft:stonebrick",
-      "data": 0
+      "item": "minecraft:bucket"
     }
   },
   "result": {
