@@ -32,7 +32,7 @@ public class TileCollector extends TileEntity implements ITickable
     private int ammount=0;
     public boolean running=false;
 
-    public final int fluidTickrate=6;//ticks per mb --- include in recipe handler??? ___ Default 12
+    public final int fluidTickrate=1;//ticks per mb --- include in recipe handler??? ___ Default 6
     public int durability=0;
 
 

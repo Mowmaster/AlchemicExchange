@@ -1,4 +1,4 @@
-package com.mowmaster.alchex.recipes.HashMaps;
+package com.mowmaster.alchex.recipes.hashmaps;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;

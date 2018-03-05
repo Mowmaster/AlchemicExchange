@@ -1,7 +1,7 @@
 package com.mowmaster.alchex.recipes;
 
 import com.google.common.collect.Maps;
-import com.mowmaster.alchex.recipes.HashMaps.ProcessorHash;
+import com.mowmaster.alchex.recipes.hashmaps.ProcessorHash;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

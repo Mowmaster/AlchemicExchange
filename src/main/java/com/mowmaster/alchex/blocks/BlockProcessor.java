@@ -121,17 +121,17 @@ public class BlockProcessor extends Block implements ITileEntityProvider
                         if (playerIn.getHeldItem(hand).isEmpty())
                         {
                             playerIn.setHeldItem(hand, tileProcessor.playerOutput);
-                            return false;
+                            return true;
                         }
                         else if (!playerIn.getHeldItem(hand).isEmpty())
                         {
                             playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput);
-                            return false;
+                            return true;
                         }
                         else if (!playerIn.inventory.addItemStackToInventory(tileProcessor.playerOutput))
                         {
                             playerIn.dropItem(tileProcessor.playerOutput, false);
-                            return false;
+                            return true;
                         }
 
                     }

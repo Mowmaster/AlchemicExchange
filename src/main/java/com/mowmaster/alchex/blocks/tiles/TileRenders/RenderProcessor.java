@@ -1,18 +1,13 @@
-package com.mowmaster.alchex.blocks.tiles.TileRenders;
+package com.mowmaster.alchex.blocks.tiles.tilerenders;
 
-import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
-import com.mowmaster.alchex.blocks.tiles.TileCollector;
 import com.mowmaster.alchex.blocks.tiles.TileProcessor;
-import com.mowmaster.alchex.recipes.ProcessorRecipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;

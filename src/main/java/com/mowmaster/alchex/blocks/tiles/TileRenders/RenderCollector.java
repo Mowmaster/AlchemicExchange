@@ -1,9 +1,6 @@
-package com.mowmaster.alchex.blocks.tiles.TileRenders;
+package com.mowmaster.alchex.blocks.tiles.tilerenders;
 
-import com.mowmaster.alchex.blocks.liquids.LiquidBasic;
 import com.mowmaster.alchex.blocks.tiles.TileCollector;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -14,7 +11,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
